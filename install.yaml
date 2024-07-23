@@ -2,71 +2,52 @@
 
 name: ddev-diffy
 
-# pre_install_actions - list of actions to run before installing the addon.
-# Examples would be removing an extraneous docker volume,
-# or doing a sanity check for requirements.
-# DDEV environment variables can be interpolated into these actions
 pre_install_actions:
-  # Actions with #ddev-nodisplay will not show the execution of the action, but may show their output
-# - |
-  # #ddev-nodisplay
-  #ddev-description:Check architecture type for incompatible arm64 type
-  # if [ "$(uname -m)" = "arm64" -o "$(uname -m)" = "aarch64" ]; then
-    # echo "This package does not work on arm64 (Apple Silicon) machines";
-    # exit 1;
-  #fi
+  # Get DIFFY_API_KEY from user if we don't have it yet
+  - |
+    #ddev-nodisplay
+    if ( {{ contains "DIFFY_API_KEY" (list .DdevGlobalConfig.web_environment | toString) }} || {{ contains "DIFFY_API_KEY" (list .DdevProjectConfig.web_environment | toString) }} ); then
+      echo "Using existing DIFFY_API_KEY."
+    else
+      printf "\n\nPlease enter your Diffy API key: "
+    fi
 
-# - "docker volume rm ddev-${DDEV_PROJECT}_solr 2>/dev/null || true"
-#- |
-#  # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
-#  #ddev-nodisplay
-#  #ddev-description:Remove solr volume
-#  if ! ( ddev debug capabilities 2>/dev/null | grep multiple-dockerfiles >/dev/null 2>&1 ) ; then
-#    echo "This add-on requires DDEV v1.19.4 or higher, please upgrade." && exit 2
-#  fi
-#- 'echo "what is your platform.sh token" && read x'
+  - |
+    #ddev-nodisplay
+    #ddev-description:Setting DIFFY_API_KEY
+    if !( {{ contains "DIFFY_API_KEY" (list .DdevGlobalConfig.web_environment | toString) }} || {{ contains "DIFFY_API_KEY" (list .DdevProjectConfig.web_environment | toString) }} ); then
+      read token
+      # Put the token into the global web environment
+      ddev config global --web-environment-add DIFFY_API_KEY=${token}
+      echo "DIFFY_API_KEY set globally"
+    fi
 
-# This item shows templating using DDEV environment variables.
-# -
-#   #ddev-description:Touch a file to create it
-#   touch somefile.${DDEV_PROJECT_TYPE}.${DDEV_DOCROOT}.txt
-#
+  - |
+    #ddev-nodisplay
+    # echo 'list ddevprojectconfig.web_environment={{ list .DdevProjectConfig.web_environment | toString }}'
+    if ({{ contains "DIFFY_PROJECT_ID=" (list .DdevProjectConfig.web_environment | toString) }} ); then
+      echo "Using existing DIFFY_PROJECT_ID from project config.yaml."
+    else
+      printf "\n\nPlease enter your Diffy project ID (like '123123'): "
+    fi
 
-# This item shows complex go templating possibilities based on yaml_read_files
-#- |
-#- #ddev-description:Create a config.platformsh.yaml
-#  cat <<EOF >.ddev/config.platformsh.yaml
-#  php_version: {{ trimPrefix "php:" .platformapp.type }}
-#  database:
-#    type: {{ regexReplaceAll ":.*$" .services.db.type "" }}
-#    version: {{ regexReplaceAll "^.*:" .services.db.type "" }}
-#
-#  docroot: {{ dig "web" "locations" "/" "root" "notfound" .platformapp }}
-#  {{ if eq .platformapp.build.flavor "composer" }}
-#  hooks:
-#    post-start:
-#      - composer: install
-#  {{ if .platformapp.hooks.deploy }}
-#      - exec: "{{ trimAll "\n" .platformapp.hooks.deploy | splitList "\n" | join ` && ` }}"
-#  {{ end }}
-#  {{ end }}
-#
-#  EOF
-
-# list of files and directories listed that are copied into project .ddev directory
-# Each file should contain #ddev-generated so it can be replaced by a later `ddev get`
-# if it hasn't been modified by the user.
-# DDEV environment variables can be interpolated into these filenames
-# If you use directories, they must be directories that are managed
-# by this add-on, or removal could remove things that are not owned by it
+  - |
+    #ddev-nodisplay
+    #ddev-description:Set DIFFY_PROJECT_ID
+    if !( {{ contains "DIFFY_PROJECT_ID" (list .DdevProjectConfig.web_environment | toString) }} ); then
+      read diffy_project_id
+      echo "diffy_project_id = '${diffy_project_id}'"
+      # Put the diffy_project_id in to the project's diffy environment
+      ddev config --web-environment-add DIFFY_PROJECT_ID=${diffy_project_id}
+      echo "DIFFY_PROJECT_ID set to ${diffy_project_id}"
+    fi
 project_files:
 - docker-compose.diffy.yaml
 
 # List of files and directories that are copied into the global .ddev directory
 # DDEV environment variables can be interpolated into these filenames
 global_files:
-# - commands/web/add-on-command
-# - homeadditions/some-file.txt
+ - commands/diffy/screenshot
 
 # List of add-on names that this add-on depends on
 dependencies:
@@ -77,7 +58,6 @@ post_install_actions:
   - wget https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/main.zip
   - unzip main.zip
   - rm main.zip
-  - echo "Installing node dependencies. This will take a while."
   - cd diffy-worker-main && npm install
 
 # Shell actions that can be done during removal of the add-on
