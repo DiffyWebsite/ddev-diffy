@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cd /mnt/ddev_config/diffy-worker-main/ && node diffy-screenshots --disable-warning --url=https://web --screenshot-name=$VIRTUAL_HOST

@@ -61,10 +61,6 @@ pre_install_actions:
 # by this add-on, or removal could remove things that are not owned by it
 project_files:
 - docker-compose.diffy.yaml
-# - some-directory/file1.txt
-# - some-directory/file2.txt
-# - extra_files_dir_created_by_this_template/
-# - somefile.sh
 
 # List of files and directories that are copied into the global .ddev directory
 # DDEV environment variables can be interpolated into these filenames
@@ -76,14 +72,18 @@ global_files:
 dependencies:
 # - redis
 
-# DDEV environment variables can be interpolated into these actions
+# Download the latest version of the worker code
 post_install_actions:
   - wget https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/main.zip
   - unzip main.zip
+  - rm main.zip
+  - echo "Installing node dependencies. This will take a while."
+  - cd diffy-worker-main && npm install
 
 # Shell actions that can be done during removal of the add-on
 removal_actions:
-# - rm ~/.ddev/commands/web/somecommand
+  - rm -rf ~/.ddev/commands/diffy
+  - rm -rf ~/.ddev/diffy-worker-main
 
 # Advanced usage - yaml files can be read in and then used as go template actions
 # in pre_install_actions and post_install_actions
