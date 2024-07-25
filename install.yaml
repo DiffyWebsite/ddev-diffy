@@ -58,10 +58,28 @@ post_install_actions:
   - cd diffy-worker-main && npm install
   - |
     #ddev-nodisplay
-    #ddev-description:Create .env file with env variables.
+    #ddev-description:Create .env file
+    DIFFY_API_KEY='{{- $foundDiffApiKey := false -}}
+    {{- range .DdevGlobalConfig.web_environment }}
+      {{- if not $foundDiffApiKey }}
+        {{- $keyVal := splitList "=" . }}
+        {{- if eq (index $keyVal 0) "DIFFY_API_KEY" }}
+          {{- index $keyVal 1 -}}
+          {{- $foundDiffApiKey = true -}}
+        {{- end }}
+      {{- end }}
+    {{- end }}'
 
-    DIFFY_PROJECT_ID=$(ddev exec 'echo $DIFFY_PROJECT_ID')
-    DIFFY_API_KEY=$(ddev exec 'echo $DIFFY_API_KEY')
+    DIFFY_PROJECT_ID='{{- $foundDiffProjectId := false -}}
+    {{- range .DdevProjectConfig.web_environment }}
+      {{- if not $foundDiffProjectId }}
+        {{- $keyVal := splitList "=" . }}
+        {{- if eq (index $keyVal 0) "DIFFY_PROJECT_ID" }}
+          {{- index $keyVal 1 -}}
+          {{- $foundDiffProjectId = true -}}
+        {{- end }}
+      {{- end }}
+    {{- end }}'
 
     cat <<-EOF >diffy-worker-main/.env
     # #ddev-generated
