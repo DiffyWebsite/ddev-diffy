@@ -11,8 +11,6 @@ services:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
     environment:
-      DIFFY_API_KEY: ${DIFFY_API_KEY}
-      DIFFY_PROJECT_ID: ${DIFFY_PROJECT_ID}
       VIRTUAL_HOST: ${DDEV_HOSTNAME}
     volumes:
     - ".:/mnt/ddev_config"
