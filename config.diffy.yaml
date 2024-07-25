@@ -1,0 +1,4 @@
+hooks:
+  post-start:
+    - exec: cd /mnt/ddev_config/diffy-worker-main && npm install
+      service: diffy
