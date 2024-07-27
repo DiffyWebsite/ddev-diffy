@@ -2,7 +2,7 @@
 services:
   diffy:
     container_name: ddev-${DDEV_SITENAME}-diffy
-    image: diffywebsite2/screenshot-worker:latest
+    image: diffywebsite2/screenshot-worker:0.0.1
     command: tail -f /dev/null
     networks: [default, ddev_default]
     restart: "no"
