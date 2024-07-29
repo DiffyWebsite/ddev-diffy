@@ -55,7 +55,7 @@ global_files:
 post_install_actions:
   - wget https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/main.zip
   - unzip main.zip
-  - rm main.zip
+  - rm -f main.zip
   - |
     #ddev-nodisplay
     #ddev-description:Create .env file

@@ -4,7 +4,6 @@ services:
     container_name: ddev-${DDEV_SITENAME}-diffy
     image: diffywebsite2/screenshot-worker:0.0.1
     command: tail -f /dev/null
-    networks: [default, ddev_default]
     restart: "no"
     # These labels ensure this service is discoverable by ddev.
     labels:
@@ -12,6 +11,8 @@ services:
       com.ddev.approot: $DDEV_APPROOT
     environment:
       - DDEV_HOSTNAME
+      - DDEV_UID
+      - DDEV_GID
     volumes:
     - ".:/mnt/ddev_config"
     - "ddev-global-cache:/mnt/ddev-global-cache"
