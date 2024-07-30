@@ -46,6 +46,7 @@ project_files:
 - docker-compose.diffy.yaml
 - commands/diffy/screenshot
 - config.diffy.yaml
+- diffy/Dockerfile
 
 # List of files and directories that are copied into the global .ddev directory
 # DDEV environment variables can be interpolated into these filenames
@@ -95,6 +96,7 @@ removal_actions:
   - rm -rf commands/diffy
   - rm -rf diffy-worker-main
   - rm config.diffy.yaml
+  - rm -rf diffy
 
 # Advanced usage - yaml files can be read in and then used as go template actions
 # in pre_install_actions and post_install_actions

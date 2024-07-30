@@ -3,6 +3,14 @@ services:
   diffy:
     container_name: ddev-${DDEV_SITENAME}-diffy
     image: diffywebsite2/screenshot-worker:0.0.1
+    user: '$DDEV_UID:$DDEV_GID'
+    build:
+      context: 'diffy'
+      args:
+        BASE_IMAGE: diffywebsite2/screenshot-worker:0.0.1
+        username: "diffy"
+        uid: ${DDEV_UID}
+        gid: ${DDEV_GID}
     command: tail -f /dev/null
     restart: "no"
     # These labels ensure this service is discoverable by ddev.
