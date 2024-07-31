@@ -19,8 +19,6 @@ services:
       com.ddev.approot: $DDEV_APPROOT
     environment:
       - DDEV_HOSTNAME
-      - DDEV_UID
-      - DDEV_GID
       - npm_config_cache=/mnt/ddev-global-cache/npm
     volumes:
     - ".:/mnt/ddev_config"
