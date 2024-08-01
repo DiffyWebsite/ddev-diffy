@@ -1,4 +1,5 @@
+#ddev-generated
 hooks:
   post-start:
-    - exec: bash -ci 'worker=/mnt/ddev_config/diffy-worker-main; ( [ ! -d $worker/node_modules ] && npm install --prefix $worker && chown -R $DDEV_UID:$DDEV_GID $worker/node_modules ) || rm -rf $worker/node_modules'
+    - exec: '[ -d node_modules ] || npm install'
       service: diffy

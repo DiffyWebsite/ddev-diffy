@@ -1,9 +1,6 @@
-### Add "diffy" user to the container.
-ARG BASE_IMAGE
-FROM $BASE_IMAGE
-SHELL ["/bin/bash", "-c"]
-
-ARG username
-ARG uid
-ARG gid
-RUN (groupadd --gid $gid "$username" || groupadd "$username" || true) && (useradd  -l -m -s "/bin/bash" --gid "$username" --comment '' --uid $uid "$username" || useradd  -l -m -s "/bin/bash" --gid "$username" --comment '' "$username" || useradd  -l -m -s "/bin/bash" --gid "$gid" --comment '' "$username" || useradd -l -m -s "/bin/bash" --comment '' $username )
+#ddev-generated
+FROM diffywebsite2/screenshot-worker:0.0.1
+# I don't know why, but `npm install` tries to use this folder,
+# even when using npm_config_cache=/mnt/ddev-global-cache/npm
+# This should be in the parent Dockerfile
+RUN mkdir /.cache && chmod ugo+w /.cache
