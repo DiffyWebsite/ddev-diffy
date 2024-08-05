@@ -2,46 +2,6 @@
 
 name: ddev-diffy
 
-pre_install_actions:
-  # Get DIFFY_API_KEY from user if we don't have it yet
-  - |
-    #ddev-nodisplay
-    if ( {{ contains "DIFFY_API_KEY" (list .DdevGlobalConfig.web_environment | toString) }} || {{ contains "DIFFY_API_KEY" (list .DdevProjectConfig.web_environment | toString) }} ); then
-      echo "Using existing DIFFY_API_KEY."
-    else
-      printf "\n\nPlease enter your Diffy API key: "
-    fi
-
-  - |
-    #ddev-nodisplay
-    #ddev-description:Setting DIFFY_API_KEY
-    if !( {{ contains "DIFFY_API_KEY" (list .DdevGlobalConfig.web_environment | toString) }} || {{ contains "DIFFY_API_KEY" (list .DdevProjectConfig.web_environment | toString) }} ); then
-      read token
-      # Put the token into the global web environment
-      ddev config global --web-environment-add DIFFY_API_KEY=${token}
-      echo "DIFFY_API_KEY set globally"
-    fi
-
-  - |
-    #ddev-nodisplay
-    # echo 'list ddevprojectconfig.web_environment={{ list .DdevProjectConfig.web_environment | toString }}'
-    if ({{ contains "DIFFY_PROJECT_ID=" (list .DdevProjectConfig.web_environment | toString) }} ); then
-      echo "Using existing DIFFY_PROJECT_ID from project config.yaml."
-    else
-      printf "\n\nPlease enter your Diffy project ID (like '123123'): "
-    fi
-
-  - |
-    #ddev-nodisplay
-    #ddev-description:Set DIFFY_PROJECT_ID
-    if !( {{ contains "DIFFY_PROJECT_ID" (list .DdevProjectConfig.web_environment | toString) }} ); then
-      read diffy_project_id
-      echo "diffy_project_id = '${diffy_project_id}'"
-      # Put the diffy_project_id in to the project's diffy environment
-      ddev config --web-environment-add DIFFY_PROJECT_ID=${diffy_project_id}
-      echo "DIFFY_PROJECT_ID set to ${diffy_project_id}"
-    fi
-
 project_files:
 - docker-compose.diffy.yaml
 - commands/diffy/screenshot
@@ -55,39 +15,6 @@ global_files:
 post_install_actions:
   - rm -rf diffy-worker && mkdir diffy-worker
   - docker run -it --rm -v ./diffy-worker:/diffy-worker --user $DDEV_UID:$DDEV_GID ddev/ddev-utilities bash -c "cd /diffy-worker && wget -qO- https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/main.tar.gz | tar xz --strip-components=1"
-  - |
-    #ddev-nodisplay
-    #ddev-description:Create .env file
-    DIFFY_API_KEY='{{- $foundDiffApiKey := false -}}
-    {{- range .DdevGlobalConfig.web_environment }}
-      {{- if not $foundDiffApiKey }}
-        {{- $keyVal := splitList "=" . }}
-        {{- if eq (index $keyVal 0) "DIFFY_API_KEY" }}
-          {{- index $keyVal 1 -}}
-          {{- $foundDiffApiKey = true -}}
-        {{- end }}
-      {{- end }}
-    {{- end }}'
-
-    DIFFY_PROJECT_ID='{{- $foundDiffProjectId := false -}}
-    {{- range .DdevProjectConfig.web_environment }}
-      {{- if not $foundDiffProjectId }}
-        {{- $keyVal := splitList "=" . }}
-        {{- if eq (index $keyVal 0) "DIFFY_PROJECT_ID" }}
-          {{- index $keyVal 1 -}}
-          {{- $foundDiffProjectId = true -}}
-        {{- end }}
-      {{- end }}
-    {{- end }}'
-
-    cat <<-EOF >diffy-worker/.env
-    # #ddev-generated
-    NODE_ENV=dev
-    DEBUG=true
-    DIFFY_PROJECT_ID=${DIFFY_PROJECT_ID}
-    DIFFY_API_KEY=${DIFFY_API_KEY}
-
-    EOF
 
 # Shell actions that can be done during removal of the add-on
 removal_actions:

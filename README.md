@@ -10,8 +10,12 @@ This repository is a recipe for DDEV to have a local worker that will allow taki
 
 Add this addon as `ddev get diffywebsite/ddev-diffy`.
 
-Register an account in Diffy and create an API key. While installation of the addon you will be asked for API KEY and PROJECT ID. Please provide them so configuration is saved.
+Register an account in Diffy and create an [API key](https://stage.diffy.website/#/keys).
+
+Once you have your container ready after `ddev restart` we need to provide API key and project ID to `.env` file. For that go to `.ddev/diffy-worker`, copy existing example file `cp .env.example .env` and edit `.env` file to provide your credentials.
 
 To run the screenshots do `ddev screenshot`. It will produce a URL to your screenshots uploaded to Diffy. Next you can compare them to your any other sets (production, staging, baseline etc.).
+
+Remember to check our [documentation page](https://docs.diffy.website/features/local-development/ddev-add-on). 
 
 **Contributed and maintained by [@ygerasimov](https://github.com/ygerasimov)**
