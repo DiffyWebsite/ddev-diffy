@@ -4,4 +4,4 @@
 ## Usage: screenshot
 ## Example: "ddev screenshot"
 
-node diffy-screenshots --url=https://web --screenshot-name=$DDEV_HOSTNAME
+node --env-file=.env diffy-screenshots --url=https://web --screenshot-name=$DDEV_HOSTNAME
