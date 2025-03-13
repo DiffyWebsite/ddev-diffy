@@ -8,7 +8,17 @@ This repository is a recipe for DDEV to have a local worker that will allow taki
 
 ## Installation
 
-Add this addon as `ddev get diffywebsite/ddev-diffy`.
+For DDEV v1.23.5 or above run
+
+```sh
+ddev add-on get diffywebsite/ddev-diffy
+```
+
+For earlier versions of DDEV run
+
+```sh
+ddev get diffywebsite/ddev-diffy
+```
 
 Register an account in Diffy and create an [API key](https://app.diffy.website/#/keys).
 
