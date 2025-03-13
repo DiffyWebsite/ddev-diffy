@@ -10,7 +10,7 @@ This repository is a recipe for DDEV to have a local worker that will allow taki
 
 Add this addon as `ddev get diffywebsite/ddev-diffy`.
 
-Register an account in Diffy and create an [API key](https://stage.diffy.website/#/keys).
+Register an account in Diffy and create an [API key](https://app.diffy.website/#/keys).
 
 Once you have your container ready after `ddev restart` we need to provide API key and project ID to `.env` file. For that go to `.ddev/diffy-worker`, copy existing example file `cp .env.example .env` and edit `.env` file to provide your credentials.
 

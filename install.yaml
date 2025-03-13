@@ -14,7 +14,7 @@ global_files:
 # Download the latest version of the worker code
 post_install_actions:
   - rm -rf diffy-worker && mkdir diffy-worker
-  - docker run -it --rm -v ./diffy-worker:/diffy-worker --user $DDEV_UID:$DDEV_GID ddev/ddev-utilities bash -c "cd /diffy-worker && wget -qO- https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/main.tar.gz | tar xz --strip-components=1"
+  - docker run -it --rm -v ./diffy-worker:/diffy-worker --user $DDEV_UID:$DDEV_GID ddev/ddev-utilities bash -c "cd /diffy-worker && wget -qO- https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/chrome131.tar.gz | tar xz --strip-components=1"
 
 # Shell actions that can be done during removal of the add-on
 removal_actions:
