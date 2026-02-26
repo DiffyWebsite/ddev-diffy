@@ -1,21 +1,30 @@
-# Details about the install.yaml file are at https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#sections-and-features-of-ddev-get-add-on-installyaml
-
 name: ddev-diffy
 
 project_files:
-- docker-compose.diffy.yaml
-- commands/diffy/screenshot
-- config.diffy.yaml
+  - docker-compose.diffy.yaml
+  - commands/diffy/screenshot
+  - config.diffy.yaml
 
-# List of files and directories that are copied into the global .ddev directory
-# DDEV environment variables can be interpolated into these filenames
-global_files:
+ddev_version_constraint: '>= v1.24.10'
 
-# Download the latest version of the worker code
 post_install_actions:
-  - rm -rf diffy-worker && mkdir diffy-worker
-  - docker run -it --rm -v ./diffy-worker:/diffy-worker --user $DDEV_UID:$DDEV_GID ddev/ddev-utilities bash -c "cd /diffy-worker && wget -qO- https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/main.tar.gz | tar xz --strip-components=1"
+  - |
+    #ddev-description:Download the latest version of the Diffy worker code
+    # Backup existing .env one level up if it exists
+    if [ -f diffy-worker/.env ]; then
+      mv diffy-worker/.env diffy-worker.env.backup
+    fi
+    # Recreate directory
+    rm -rf diffy-worker && mkdir diffy-worker
+    docker run --rm \
+      -v ./diffy-worker:/diffy-worker \
+      --user $DDEV_UID:$DDEV_GID \
+      ddev/ddev-utilities \
+      bash -c "cd /diffy-worker && wget -qO- https://github.com/DiffyWebsite/diffy-worker/archive/refs/heads/main.tar.gz | tar xz --strip-components=1"
+    # Restore .env if backup exists
+    if [ -f diffy-worker.env.backup ]; then
+      mv diffy-worker.env.backup diffy-worker/.env
+    fi
 
-# Shell actions that can be done during removal of the add-on
 removal_actions:
   - rm -rf diffy-worker
